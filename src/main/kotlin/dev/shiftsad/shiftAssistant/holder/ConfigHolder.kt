@@ -18,6 +18,4 @@ object ConfigHolder {
             current?.let(transform) ?: error("AppConfig not initialized")
         }
     }
-
-    fun isInitialized(): Boolean = ref.get() != null
 }
