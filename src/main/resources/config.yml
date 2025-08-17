@@ -4,6 +4,14 @@ openai:
   base_url: "https://api.openai.com/v1"
   api_key: "YOUR_OPENAI_API_KEY"
   timeout_ms: 12000
+  reasoning_effort: "low" # low, medium, high
+  # Decidir o "temperamento" do assistente, sendo um número menor mais conservador e um número maior mais criativo. (0 a 1)
+  temperature: 0.2
+  # Quantidade máxima de tokens que a resposta pode ter
+  max_completion_tokens: 512
+  # Usado para ajudar a OpenAI a monitorar e identificar abuso
+  user: "ShiftAssistant v1 - Your server name"
+
 
 retrieval:
   top_k: 6

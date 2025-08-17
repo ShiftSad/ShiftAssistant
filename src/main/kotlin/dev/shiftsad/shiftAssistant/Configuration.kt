@@ -16,7 +16,11 @@ data class OpenAIConfig(
     val embeddingsModel: String,
     val baseUrl: String,
     val apiKey: String,
-    val timeoutMs: Int
+    val timeoutMs: Int,
+    val reasoningEffort: String, // low, medium, high
+    val temperature: Double, // 0 a 1
+    val maxCompletionTokens: Int,
+    val user: String
 )
 
 @Serializable

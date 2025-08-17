@@ -6,9 +6,9 @@ import dev.shiftsad.shiftAssistant.AppConfig
 import java.util.concurrent.atomic.AtomicReference
 
 object OpenAIHolder {
-    private val ref = AtomicReference<OpenAI?>()
+    private val ref = AtomicReference<OpenAI>()
 
-    fun requireGet(): OpenAI =
+    fun get(): OpenAI =
         ref.get() ?: error("OpenAI client not initialized")
 
     fun initFromConfig(config: AppConfig) {
