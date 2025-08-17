@@ -9,8 +9,8 @@ object ConfigHolder {
     fun get(): AppConfig =
         ref.get() ?: error("AppConfig not initialized")
 
-    fun set(newConfig: AppConfig) {
-        ref.set(newConfig)
+    fun set(config: AppConfig) {
+        ref.set(config)
     }
 
     fun update(transform: (AppConfig) -> AppConfig) {

@@ -11,11 +11,11 @@ object OpenAIHolder {
     fun requireGet(): OpenAI =
         ref.get() ?: error("OpenAI client not initialized")
 
-    fun initFromConfig(cfg: AppConfig) {
+    fun initFromConfig(config: AppConfig) {
         val client =
             OpenAI(
-                token = cfg.openAI.apiKey,
-                host = OpenAIHost(baseUrl = cfg.openAI.baseUrl)
+                token = config.openAI.apiKey,
+                host = OpenAIHost(baseUrl = config.openAI.baseUrl)
             )
         ref.set(client)
     }
