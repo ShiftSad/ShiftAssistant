@@ -1,0 +1,22 @@
+openai:
+  model: "gpt-5-mini"
+  embeddings_model: "text-embedding-3-small"
+  base_url: "https://api.openai.com/v1"
+  api_key: "YOUR_OPENAI_API_KEY"
+  timeout_ms: 12000
+
+retrieval:
+  top_k: 6
+  min_cosine: 0.78
+  max_chunk_chars: 1800
+
+prompt:
+  base_prompt: "Você deve apenas responder com informações de seu banco de conhecimento e dados em tempo real, caso contrário, fale que desconhece a resposta.
+    Base de conhecimentos: {{knowledge}}
+    Dados em tempo real: {{realtime}}"
+  # Supports placeholder api
+  live_prompt: "Nick: %player_name% Dinheiro: %player_money% Pontos: %player_points% Nível: %player_level% Última mensagem: %last_message%"
+
+rate_limits:
+  per_player_qpm: 6
+  per_server_qpm: 120

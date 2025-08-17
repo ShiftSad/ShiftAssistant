@@ -1,0 +1,4 @@
+name: ShiftAssistant
+version: '1.0.0'
+main: dev.shiftsad.shiftAssistant.ShiftAssistant
+api-version: '1.20'
