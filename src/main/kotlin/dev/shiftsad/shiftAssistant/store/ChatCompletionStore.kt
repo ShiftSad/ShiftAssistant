@@ -4,10 +4,14 @@ import com.aallam.ktoken.Tokenizer
 import com.aallam.openai.api.chat.ChatMessage
 import dev.shiftsad.shiftAssistant.HistoryConfig
 import dev.shiftsad.shiftAssistant.holder.ConfigHolder
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.fixedRateTimer
 
+@OptIn(DelicateCoroutinesApi::class)
 class MessageHistoryStore {
 
     private val histories = ConcurrentHashMap<UUID, ArrayDeque<ChatMessage>>()
@@ -23,9 +27,7 @@ class MessageHistoryStore {
         ) {
             histories.keys.forEach { playerId ->
                 cleanupOldMessages(playerId)
-                kotlinx.coroutines.runBlocking {
-                    cleanupHighTokenMessages(playerId)
-                }
+                GlobalScope.launch { cleanupHighTokenMessages(playerId) }
             }
         }
     }
