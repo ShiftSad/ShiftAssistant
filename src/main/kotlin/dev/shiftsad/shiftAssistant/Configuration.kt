@@ -16,6 +16,7 @@ data class OpenAIConfig(
     val model: String,
     val embeddingsModel: String,
     val apiKey: String,
+    val baseUrl: String,
     val timeoutMs: Int,
     val reasoningEffort: String, // low, medium, high
     val temperature: Double, // 0 a 1
