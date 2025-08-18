@@ -4,7 +4,6 @@ import dev.shiftsad.shiftAssistant.holder.ConfigHolder
 import dev.shiftsad.shiftAssistant.repository.LuceneVectorRepository
 import dev.shiftsad.shiftAssistant.repository.Neighbor
 
-
 class RetrievalService(
     private val repo: LuceneVectorRepository,
     private val embeddingService: EmbeddingService = EmbeddingService()
@@ -13,13 +12,13 @@ class RetrievalService(
         sourceId: String,
         text: String
     ): Int {
-        val cfg = ConfigHolder.get()
-        val chunks = chunkText(text, cfg.retrieval.maxChunkChars)
+        val config = ConfigHolder.get()
+        val chunks = chunkText(text, config.retrieval.maxChunkChars)
         var count = 0
         for ((idx, chunk) in chunks.withIndex()) {
             val id = "$sourceId#$idx"
-            val emb = embeddingService.embed(chunk)
-            repo.upsertChunk(id = id, text = chunk, embedding = emb)
+            val embedding = embeddingService.embed(chunk)
+            repo.upsertChunk(id = id, text = chunk, embedding = embedding)
             count++
         }
         repo.commit()
@@ -27,12 +26,12 @@ class RetrievalService(
     }
 
     suspend fun search(query: String): List<Neighbor> {
-        val cfg = ConfigHolder.get()
-        val emb = embeddingService.embed(query)
+        val config = ConfigHolder.get()
+        val embedding = embeddingService.embed(query)
         return repo.topK(
-            embedding = emb,
-            k = cfg.retrieval.topK,
-            minCosine = cfg.retrieval.minCosine
+            embedding = embedding,
+            k = config.retrieval.topK,
+            minCosine = config.retrieval.minCosine
         )
     }
 }

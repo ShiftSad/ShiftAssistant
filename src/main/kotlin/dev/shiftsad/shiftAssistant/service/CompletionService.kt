@@ -2,6 +2,7 @@ package dev.shiftsad.shiftAssistant.service
 
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.ChatRole
+import dev.shiftsad.shiftAssistant.controller.RetrievalController
 import dev.shiftsad.shiftAssistant.gateway.OpenAIGateway
 import dev.shiftsad.shiftAssistant.holder.ConfigHolder
 import dev.shiftsad.shiftAssistant.holder.OpenAIHolder
@@ -10,7 +11,8 @@ import dev.shiftsad.shiftAssistant.util.Placeholders
 import org.bukkit.entity.Player
 
 class CompletionService(
-    private val history: MessageHistoryStore
+    private val history: MessageHistoryStore,
+    private val retrievalController: RetrievalController
 ) {
     suspend fun complete(
         player: Player,
@@ -23,8 +25,11 @@ class CompletionService(
             client = OpenAIHolder.get()
         )
 
+        val knowledge = retrievalController.search(query = message)
+        val knowledgeText = knowledge.joinToString("\n") { it.text }
+
         val systemPrompt = config.prompt.basePrompt
-            .replace("{{knowledge}}", searchKnowledge(query = message))
+            .replace("{{knowledge}}", knowledgeText)
             .replace("{{extra_prompt}}", Placeholders.apply(player, template = config.prompt.extraPrompt))
 
         val system = ChatMessage(role = ChatRole.System, content = systemPrompt)
@@ -52,12 +57,6 @@ class CompletionService(
         )
 
         return assistantText
-    }
-
-    suspend fun searchKnowledge(
-        query: String
-    ): String {
-        TODO("Search embeddings database for context based on query")
     }
 
     fun clearHistory(player: Player) {
