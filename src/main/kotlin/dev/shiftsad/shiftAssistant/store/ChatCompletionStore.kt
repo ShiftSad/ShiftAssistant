@@ -6,6 +6,7 @@ import dev.shiftsad.shiftAssistant.HistoryConfig
 import dev.shiftsad.shiftAssistant.holder.ConfigHolder
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.concurrent.fixedRateTimer
 
 class MessageHistoryStore {
 
@@ -15,7 +16,7 @@ class MessageHistoryStore {
     init {
         val cleanupInterval = getHistoryConfig().cleanupIntervalSeconds * 1000L
 
-        kotlin.concurrent.fixedRateTimer(
+        fixedRateTimer(
             name = "MessageHistoryCleanup",
             initialDelay = cleanupInterval,
             period = cleanupInterval
