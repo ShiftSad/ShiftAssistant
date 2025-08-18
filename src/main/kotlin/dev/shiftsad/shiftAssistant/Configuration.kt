@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AppConfig(
     val openAI: OpenAIConfig,
+    val history: HistoryConfig,
     val retrieval: RetrievalConfig,
     val prompt: PromptConfig,
     val rateLimits: RateLimitsConfig
@@ -14,13 +15,19 @@ data class AppConfig(
 data class OpenAIConfig(
     val model: String,
     val embeddingsModel: String,
-    val baseUrl: String,
     val apiKey: String,
     val timeoutMs: Int,
     val reasoningEffort: String, // low, medium, high
     val temperature: Double, // 0 a 1
     val maxCompletionTokens: Int,
     val user: String
+)
+
+@Serializable
+data class HistoryConfig(
+    val maxMessages: Int,
+    val maxTokens: Int,
+    val maxAgeSeconds: Long
 )
 
 @Serializable
@@ -33,7 +40,7 @@ data class RetrievalConfig(
 @Serializable
 data class PromptConfig(
     val basePrompt: String,
-    val livePrompt: String
+    val extraPrompt: String
 )
 
 @Serializable

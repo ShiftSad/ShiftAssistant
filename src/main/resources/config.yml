@@ -1,17 +1,20 @@
 openai:
   model: "gpt-5-mini"
   embeddings_model: "text-embedding-3-small"
-  base_url: "https://api.openai.com/v1"
   api_key: "YOUR_OPENAI_API_KEY"
   timeout_ms: 12000
-  reasoning_effort: "low" # low, medium, high
+  reasoning_effort: "low" # Válido: low, medium, high
   # Decidir o "temperamento" do assistente, sendo um número menor mais conservador e um número maior mais criativo. (0 a 1)
   temperature: 0.2
-  # Quantidade máxima de tokens que a resposta pode ter
+  # Quantidade máxima de ‘tokens’ que a resposta pode ter
   max_completion_tokens: 512
   # Usado para ajudar a OpenAI a monitorar e identificar abuso
   user: "ShiftAssistant v1 - Your server name"
 
+history:
+  max_messages: 10
+  max_tokens: 2048
+  max_age_seconds: 7200 # 2 horas
 
 retrieval:
   top_k: 6
@@ -19,11 +22,13 @@ retrieval:
   max_chunk_chars: 1800
 
 prompt:
+  # Sendo knowledge o resultado da pesquisa RAG pelo banco de informações e live_prompt a resposta depois do parse do placeholder api
   base_prompt: "Você deve apenas responder com informações de seu banco de conhecimento e dados em tempo real, caso contrário, fale que desconhece a resposta.
+    Você não deve usar o formato Markdown, apenas texto simples.
     Base de conhecimentos: {{knowledge}}
-    Dados em tempo real: {{realtime}}"
+    Dados em tempo real: {{extra_prompt}}"
   # Supports placeholder api
-  live_prompt: "Nick: %player_name% Dinheiro: %player_money% Pontos: %player_points% Nível: %player_level% Última mensagem: %last_message%"
+  extra_prompt: "Nick: %player_name% Dinheiro: %player_money% Pontos: %player_points% Nível: %player_level%"
 
 rate_limits:
   per_player_qpm: 6

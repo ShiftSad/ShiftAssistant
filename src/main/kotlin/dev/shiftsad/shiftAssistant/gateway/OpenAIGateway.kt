@@ -4,22 +4,23 @@ import com.aallam.openai.api.chat.ChatCompletionRequest
 import com.aallam.openai.api.chat.ChatMessage
 import com.aallam.openai.api.chat.Effort
 import com.aallam.openai.api.model.ModelId
-import dev.shiftsad.shiftAssistant.holder.ConfigHolder
-import dev.shiftsad.shiftAssistant.holder.OpenAIHolder
+import com.aallam.openai.client.OpenAI
+import dev.shiftsad.shiftAssistant.OpenAIConfig
 
-class OpenAIGateway {
+class OpenAIGateway(
+    private val config: OpenAIConfig,
+    private val client: OpenAI
+) {
 
     suspend fun chatCompletion(messages: List<ChatMessage>): Result {
-        val cfg = ConfigHolder.get().openAI
-        val client = OpenAIHolder.get()
 
         val request = ChatCompletionRequest(
-            model = ModelId(cfg.model),
+            model = ModelId(config.model),
             messages = messages,
-            reasoningEffort = Effort(id = cfg.reasoningEffort),
-            temperature = cfg.temperature,
-            maxCompletionTokens = cfg.maxCompletionTokens,
-            user = cfg.user
+            reasoningEffort = Effort(id = config.reasoningEffort),
+            temperature = config.temperature,
+            maxCompletionTokens = config.maxCompletionTokens,
+            user = config.user
         )
 
         val completion = client.chatCompletion(request)

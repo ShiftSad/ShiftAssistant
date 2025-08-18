@@ -13,6 +13,9 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/") {
         name = "papermc-repo"
     }
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
+        name = "placeholderapi-repo"
+    }
 }
 
 dependencies {
@@ -26,6 +29,8 @@ dependencies {
     implementation(platform("com.fasterxml.jackson:jackson-bom:2.19.2"))
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    compileOnly("me.clip:placeholderapi:2.11.6")
 }
 
 tasks {
