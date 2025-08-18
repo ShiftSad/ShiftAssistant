@@ -23,7 +23,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     implementation(platform("com.aallam.openai:openai-client-bom:4.0.1"))
+    implementation(platform("com.aallam.ktoken:ktoken-bom:0.4.0"))
     implementation("com.aallam.openai:openai-client")
+    implementation("com.aallam.ktoken:ktoken")
     runtimeOnly("io.ktor:ktor-client-okhttp")
 
     implementation(platform("com.fasterxml.jackson:jackson-bom:2.19.2"))

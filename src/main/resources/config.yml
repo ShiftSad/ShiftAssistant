@@ -16,6 +16,7 @@ history:
   max_messages: 10
   max_tokens: 2048
   max_age_seconds: 7200 # 2 horas
+  cleanup_interval_seconds: 30 # Tempo em segundos entre as limpezas do histórico de mensagens
 
 retrieval:
   top_k: 6

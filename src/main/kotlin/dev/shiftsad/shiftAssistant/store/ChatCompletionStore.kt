@@ -1,5 +1,6 @@
 package dev.shiftsad.shiftAssistant.store
 
+import com.aallam.ktoken.Tokenizer
 import com.aallam.openai.api.chat.ChatMessage
 import dev.shiftsad.shiftAssistant.HistoryConfig
 import dev.shiftsad.shiftAssistant.holder.ConfigHolder
@@ -11,9 +12,25 @@ class MessageHistoryStore {
     private val histories = ConcurrentHashMap<UUID, ArrayDeque<ChatMessage>>()
     private val timestamps = ConcurrentHashMap<UUID, ArrayDeque<Long>>()
 
+    init {
+        val cleanupInterval = getHistoryConfig().cleanupIntervalSeconds * 1000L
+
+        kotlin.concurrent.fixedRateTimer(
+            name = "MessageHistoryCleanup",
+            initialDelay = cleanupInterval,
+            period = cleanupInterval
+        ) {
+            histories.keys.forEach { playerId ->
+                cleanupOldMessages(playerId)
+                kotlinx.coroutines.runBlocking {
+                    cleanupHighTokenMessages(playerId)
+                }
+            }
+        }
+    }
+
     private fun getHistoryConfig(): HistoryConfig {
         return ConfigHolder.get().history
-
     }
 
     fun get(playerId: UUID): List<ChatMessage> {
@@ -37,9 +54,6 @@ class MessageHistoryStore {
             q.removeFirst()
             timeQ.removeFirst()
         }
-
-        cleanupOldMessages(playerId)
-        // TODO: Implement token-based cleanup when token counting is available
     }
 
     fun replaceAll(playerId: UUID, messages: List<ChatMessage>) {
@@ -68,6 +82,24 @@ class MessageHistoryStore {
         while (timeQ.isNotEmpty() && timeQ.first() < cutoffTime) {
             q.removeFirst()
             timeQ.removeFirst()
+        }
+    }
+
+    private suspend fun cleanupHighTokenMessages(playerId: UUID) {
+        val q = histories[playerId] ?: return
+        val timestamps = timestamps[playerId] ?: return
+        val config = getHistoryConfig()
+        val tokenizer = Tokenizer.of(model = "gpt-4")
+
+        var totalTokens = 0
+        while (q.isNotEmpty()) {
+            val message = q.first()
+            val tokenCount = tokenizer.encode(text = message.content ?: "").size
+
+            if (totalTokens + tokenCount > config.maxTokens) {
+                q.removeFirst()
+                timestamps.removeFirst()
+            } else totalTokens += tokenCount
         }
     }
 

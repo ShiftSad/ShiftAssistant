@@ -28,7 +28,8 @@ data class OpenAIConfig(
 data class HistoryConfig(
     val maxMessages: Int,
     val maxTokens: Int,
-    val maxAgeSeconds: Long
+    val maxAgeSeconds: Long,
+    val cleanupIntervalSeconds: Int
 )
 
 @Serializable
