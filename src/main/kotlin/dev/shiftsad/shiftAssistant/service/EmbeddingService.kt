@@ -11,7 +11,7 @@ class EmbeddingService {
         val client = OpenAIHolder.get()
 
         val req = EmbeddingRequest(
-            model = ModelId(cfg.openAI.embeddingsModel),
+            model = ModelId(cfg.openai.embeddingsModel),
             input = listOf(text)
         )
         val res = client.embeddings(req)

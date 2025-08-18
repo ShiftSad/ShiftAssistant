@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AppConfig(
-    val openAI: OpenAIConfig,
+    val openai: OpenAIConfig,
     val history: HistoryConfig,
     val retrieval: RetrievalConfig,
     val prompt: PromptConfig,

@@ -14,8 +14,8 @@ object OpenAIHolder {
     fun initFromConfig(config: AppConfig) {
         val client =
             OpenAI(
-                token = config.openAI.apiKey,
-                host = OpenAIHost(baseUrl = config.openAI.baseUrl)
+                token = config.openai.apiKey,
+                host = OpenAIHost(baseUrl = config.openai.baseUrl)
             )
         ref.set(client)
     }

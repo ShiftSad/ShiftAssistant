@@ -21,7 +21,7 @@ class CompletionService(
         val config = ConfigHolder.get()
 
         val gateway = OpenAIGateway(
-            config = config.openAI,
+            config = config.openai,
             client = OpenAIHolder.get()
         )
 
