@@ -1,6 +1,13 @@
 package dev.shiftsad.shiftAssistant.repository
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.lucene.backward_codecs.lucene100.Lucene100Codec
+import org.apache.lucene.backward_codecs.lucene90.Lucene90HnswVectorsFormat.DEFAULT_BEAM_WIDTH
+import org.apache.lucene.backward_codecs.lucene90.Lucene90HnswVectorsFormat.DEFAULT_MAX_CONN
+import org.apache.lucene.codecs.KnnVectorsFormat
+import org.apache.lucene.codecs.KnnVectorsReader
+import org.apache.lucene.codecs.KnnVectorsWriter
+import org.apache.lucene.codecs.lucene99.Lucene99HnswVectorsFormat
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
 import org.apache.lucene.document.StoredField
@@ -9,6 +16,8 @@ import org.apache.lucene.document.KnnFloatVectorField
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
+import org.apache.lucene.index.SegmentReadState
+import org.apache.lucene.index.SegmentWriteState
 import org.apache.lucene.index.Term
 import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.KnnFloatVectorQuery
@@ -18,6 +27,34 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.max
 
 data class Neighbor(val id: String, val text: String, val score: Float)
+
+class CustomHnswVectorsFormat(
+    maxConn: Int = DEFAULT_MAX_CONN,
+    beamWidth: Int = DEFAULT_BEAM_WIDTH
+) : KnnVectorsFormat("CustomHnsw") {
+
+    private val delegate = Lucene99HnswVectorsFormat(maxConn, beamWidth)
+
+    override fun getMaxDimensions(fieldName: String?): Int {
+        return 1536
+    }
+
+    override fun fieldsWriter(state: SegmentWriteState): KnnVectorsWriter {
+        return delegate.fieldsWriter(state)
+    }
+
+    override fun fieldsReader(state: SegmentReadState): KnnVectorsReader {
+        return delegate.fieldsReader(state)
+    }
+}
+
+class CustomCodec : Lucene100Codec() {
+    private val customFormat = CustomHnswVectorsFormat()
+
+    override fun getKnnVectorsFormatForField(field: String?): KnnVectorsFormat {
+        return customFormat
+    }
+}
 
 class LuceneVectorRepository(indexPath: Path) : AutoCloseable {
 
@@ -33,6 +70,7 @@ class LuceneVectorRepository(indexPath: Path) : AutoCloseable {
 
     init {
         val cfg = IndexWriterConfig(StandardAnalyzer())
+        cfg.codec = CustomCodec()
         writer = IndexWriter(directory, cfg)
         refreshSearcher()
     }

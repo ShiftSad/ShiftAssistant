@@ -17,6 +17,9 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
         name = "placeholderapi-repo"
     }
+    maven("https://repo.codemc.org/repository/maven-public/") {
+        name = "codemc-repo"
+    }
 }
 
 dependencies {
@@ -39,8 +42,10 @@ dependencies {
 
     implementation("org.apache.lucene:lucene-core:10.2.2")
     implementation("org.apache.lucene:lucene-analysis-common:10.2.2")
+    implementation("org.apache.lucene:lucene-backward-codecs:10.2.2")
 
     compileOnly("me.clip:placeholderapi:2.11.6")
+    implementation("dev.jorel:commandapi-bukkit-shade-mojang-mapped:10.1.2")
 }
 
 tasks {
@@ -55,6 +60,7 @@ tasks {
 
     shadowJar {
         relocate("com.fasterxml.jackson", "dev.shiftsad.libs.jackson")
+        relocate("dev.jorel.commandapi", "dev.shiftsad.libs.commandapi")
     }
 }
 

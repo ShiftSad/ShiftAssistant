@@ -2,7 +2,7 @@ openai:
   model: "gpt-5-mini"
   embeddings_model: "text-embedding-3-small"
   api_key: "YOUR_OPENAI_API_KEY"
-  base_url: "https://api.openai.com/v1"
+  base_url: "https://api.openai.com/v1/"
   timeout_ms: 12000
   reasoning_effort: "low" # Válido: low, medium, high
   # Decidir o "temperamento" do assistente, sendo um número menor mais conservador e um número maior mais criativo. (0 a 1)
