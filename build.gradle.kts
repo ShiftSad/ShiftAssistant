@@ -32,6 +32,10 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    implementation("org.apache.lucene:lucene-core:10.2.2")
+    implementation("org.apache.lucene:lucene-analyzers-common:10.2.2")
+    implementation("org.apache.lucene:lucene-knn:10.2.2")
+
     compileOnly("me.clip:placeholderapi:2.11.6")
 }
 
