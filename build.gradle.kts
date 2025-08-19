@@ -61,6 +61,8 @@ tasks {
     shadowJar {
         relocate("com.fasterxml.jackson", "dev.shiftsad.libs.jackson")
         relocate("dev.jorel.commandapi", "dev.shiftsad.libs.commandapi")
+
+        mergeServiceFiles()
     }
 }
 

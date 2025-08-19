@@ -7,6 +7,7 @@ import org.apache.lucene.backward_codecs.lucene90.Lucene90HnswVectorsFormat.DEFA
 import org.apache.lucene.codecs.KnnVectorsFormat
 import org.apache.lucene.codecs.KnnVectorsReader
 import org.apache.lucene.codecs.KnnVectorsWriter
+import org.apache.lucene.codecs.lucene101.Lucene101Codec
 import org.apache.lucene.codecs.lucene99.Lucene99HnswVectorsFormat
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
@@ -48,7 +49,7 @@ class CustomHnswVectorsFormat(
     }
 }
 
-class CustomCodec : Lucene100Codec() {
+class CustomCodec : Lucene101Codec() {
     private val customFormat = CustomHnswVectorsFormat()
 
     override fun getKnnVectorsFormatForField(field: String?): KnnVectorsFormat {
