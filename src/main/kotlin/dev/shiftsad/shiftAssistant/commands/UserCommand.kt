@@ -3,7 +3,6 @@ package dev.shiftsad.shiftAssistant.commands
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.TextArgument
 import dev.jorel.commandapi.executors.CommandExecutor
-import dev.shiftsad.shiftAssistant.controller.RetrievalController
 import dev.shiftsad.shiftAssistant.holder.RateLimitHolder
 import dev.shiftsad.shiftAssistant.service.CompletionService
 import kotlinx.coroutines.CoroutineScope

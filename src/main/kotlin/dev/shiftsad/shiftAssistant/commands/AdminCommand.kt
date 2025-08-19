@@ -10,7 +10,11 @@ import dev.shiftsad.shiftAssistant.holder.ConfigHolder
 import dev.shiftsad.shiftAssistant.holder.OpenAIHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.bukkit.command.CommandSender
 import java.io.File
 
@@ -68,12 +72,33 @@ class AdminCommand(private val retrievalController: RetrievalController, private
         val files = docs.listFiles() ?: return
 
         coroutineScope.launch {
-            var chunks = 0
-            for (file in files) {
-                val text = file.readText()
-                chunks += retrievalController.ingest(sourceId = file.nameWithoutExtension, text = text)
+            val semaphore = Semaphore(5)
+            var totalChunks = 0
+
+            val jobs = files.map { file ->
+                async {
+                    semaphore.withPermit {
+                        try {
+                            val text = file.readText()
+                            val chunks = retrievalController.ingest(
+                                sourceId = file.nameWithoutExtension,
+                                text = text
+                            )
+                            synchronized(this) {
+                                totalChunks += chunks
+                            }
+                            sender.sendMessage("✅ Processed: ${file.name} ($chunks chunks)")
+                        } catch (e: Exception) {
+                            sender.sendMessage("⚠️ Error processing ${file.name}: ${e.message}")
+                        }
+                    }
+                }
             }
-            sender.sendMessage("Generated embeddings for ${files.size} files, total chunks: $chunks")
+
+            jobs.awaitAll()
+            sender.sendMessage(
+                "✨ Embeddings for ${files.size} files generated, amount of chunks: $totalChunks"
+            )
         }
     }
 
