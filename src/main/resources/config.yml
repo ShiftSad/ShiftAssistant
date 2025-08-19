@@ -6,7 +6,8 @@ openai:
   timeout_ms: 12000
   reasoning_effort: "low" # Válido: low, medium, high
   # Decidir o "temperamento" do assistente, sendo um número menor mais conservador e um número maior mais criativo. (0 a 1)
-  temperature: 0.2
+  # Alguns modelos, como o gpt-5-mini, não suportam temperatura, então use 1.
+  temperature: 1
   # Quantidade máxima de ‘tokens’ que a resposta pode ter
   max_completion_tokens: 512
   # Usado para ajudar a OpenAI a monitorar e identificar abuso
@@ -36,7 +37,7 @@ prompt:
     Você não deve usar o formato Markdown, apenas texto simples.
     Base de conhecimentos: {{knowledge}}
     Dados em tempo real: {{extra_prompt}}"
-  # Supports placeholder api
+  # Suporte a placeholder api, isso só funciona quando o comando é chamado por um jogador, e o placeholder api está instalado.
   extra_prompt: "Nick: %player_name% Dinheiro: %player_money% Pontos: %player_points% Nível: %player_level%"
 
 rate_limits:

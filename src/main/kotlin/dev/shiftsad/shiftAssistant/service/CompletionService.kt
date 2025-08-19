@@ -8,6 +8,7 @@ import dev.shiftsad.shiftAssistant.holder.ConfigHolder
 import dev.shiftsad.shiftAssistant.holder.OpenAIHolder
 import dev.shiftsad.shiftAssistant.store.MessageHistoryStore
 import dev.shiftsad.shiftAssistant.util.Placeholders
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class CompletionService(
@@ -15,11 +16,11 @@ class CompletionService(
     private val retrievalController: RetrievalController
 ) {
     suspend fun complete(
-        player: Player,
+        sender: CommandSender,
         message: String,
     ): String {
         val config = ConfigHolder.get()
-
+        val player = sender as? Player
         val gateway = OpenAIGateway(
             config = config.openai,
             client = OpenAIHolder.get()
@@ -28,17 +29,18 @@ class CompletionService(
         val knowledge = retrievalController.search(query = message)
         val knowledgeText = knowledge.joinToString("\n") { it.text }
 
-        val systemPrompt = config.prompt.basePrompt
-            .replace("{{knowledge}}", knowledgeText)
-            .replace("{{extra_prompt}}", Placeholders.apply(player, template = config.prompt.extraPrompt))
+        val systemPrompt = if (player != null)
+            config.prompt.basePrompt
+                .replace("{{knowledge}}", knowledgeText)
+                .replace("{{extra_prompt}}", Placeholders.apply(player, template = config.prompt.extraPrompt))
+        else config.prompt.basePrompt.replace("{{knowledge}}", knowledgeText)
 
         val system = ChatMessage(role = ChatRole.System, content = systemPrompt)
-        val prior = history.get(player.uniqueId)
         val userMessage = ChatMessage(role = ChatRole.User, content = message)
 
         val messages = buildList {
             add(system)
-            addAll(prior)
+            if (player != null) addAll(history.get(player.uniqueId))
             add(userMessage)
         }
 
@@ -47,14 +49,16 @@ class CompletionService(
         val assistantText =
             result.text.ifBlank { "Desculpe, não sei responder." }.trim()
 
-        history.append(
-            playerId = player.uniqueId,
-            message = userMessage
-        )
-        history.append(
-            playerId = player.uniqueId,
-            message = ChatMessage(role = ChatRole.Assistant, content = assistantText)
-        )
+        if (player != null) {
+            history.append(
+                playerId = player.uniqueId,
+                message = userMessage
+            )
+            history.append(
+                playerId = player.uniqueId,
+                message = ChatMessage(role = ChatRole.Assistant, content = assistantText)
+            )
+        }
 
         return assistantText
     }
