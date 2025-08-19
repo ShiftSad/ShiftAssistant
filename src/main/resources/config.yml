@@ -19,9 +19,16 @@ history:
   cleanup_interval_seconds: 30 # Tempo em segundos entre as limpezas do histórico de mensagens
 
 retrieval:
+  # Número máximo de resultados retornados após filtragem por similaridade.
+  # Use valores entre 3 e 10 geralmente.
   top_k: 6
-  min_cosine: 0.78
-  max_chunk_chars: 1800
+  # Similaridade mínima (0.00–1.00) para considerar um chunk relevante.
+  # Aumentar reduz recall e aumenta precisão; diminuir faz o oposto.
+  min_cosine: 0.50
+  # Tamanho máximo de cada chunk (em caracteres) usado na criação de embeddings.
+  # Muito pequeno quebra contexto; muito grande dilui similaridade.
+  # Faixa recomendada: 300–800 dependendo do domínio.
+  max_chunk_chars: 400
 
 prompt:
   # Sendo knowledge o resultado da pesquisa RAG pelo banco de informações e live_prompt a resposta depois do parse do placeholder api
