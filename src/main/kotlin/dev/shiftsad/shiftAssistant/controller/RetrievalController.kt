@@ -20,6 +20,10 @@ class RetrievalController(indexDir: Path) : AutoCloseable {
         return retrievalService.search(query)
     }
 
+    fun clearIndex() {
+        repo.clear()
+    }
+
     override fun close() {
         repo.close()
     }

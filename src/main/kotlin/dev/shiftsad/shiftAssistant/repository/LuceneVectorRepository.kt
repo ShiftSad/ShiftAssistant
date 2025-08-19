@@ -1,7 +1,6 @@
 package dev.shiftsad.shiftAssistant.repository
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.backward_codecs.lucene100.Lucene100Codec
 import org.apache.lucene.backward_codecs.lucene90.Lucene90HnswVectorsFormat.DEFAULT_BEAM_WIDTH
 import org.apache.lucene.backward_codecs.lucene90.Lucene90HnswVectorsFormat.DEFAULT_MAX_CONN
 import org.apache.lucene.codecs.KnnVectorsFormat
@@ -116,6 +115,11 @@ class LuceneVectorRepository(indexPath: Path) : AutoCloseable {
             }
         }
         return results
+    }
+
+    fun clear() {
+        writer.deleteAll()
+        commit()
     }
 
     override fun close() {

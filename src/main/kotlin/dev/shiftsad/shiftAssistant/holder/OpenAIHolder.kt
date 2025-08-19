@@ -3,6 +3,8 @@ package dev.shiftsad.shiftAssistant.holder
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIHost
 import dev.shiftsad.shiftAssistant.AppConfig
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logging
 import java.util.concurrent.atomic.AtomicReference
 
 object OpenAIHolder {
@@ -15,7 +17,12 @@ object OpenAIHolder {
         val client =
             OpenAI(
                 token = config.openai.apiKey,
-                host = OpenAIHost(baseUrl = config.openai.baseUrl)
+                host = OpenAIHost(baseUrl = config.openai.baseUrl),
+                httpClientConfig = {
+                    install(Logging) {
+                        level = LogLevel.NONE
+                    }
+                }
             )
         ref.set(client)
     }

@@ -31,6 +31,7 @@ dependencies {
     implementation("com.aallam.openai:openai-client")
     implementation("com.aallam.ktoken:ktoken")
     runtimeOnly("io.ktor:ktor-client-okhttp")
+    implementation("io.ktor:ktor-client-logging:3.2.3")
 
     // Force compatible Jackson versions
     implementation(platform("com.fasterxml.jackson:jackson-bom:2.19.2"))
