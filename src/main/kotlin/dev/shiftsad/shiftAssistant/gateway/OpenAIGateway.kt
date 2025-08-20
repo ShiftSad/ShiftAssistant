@@ -13,15 +13,23 @@ class OpenAIGateway(
 ) {
 
     suspend fun chatCompletion(messages: List<ChatMessage>): Result {
-
-        val request = ChatCompletionRequest(
-            model = ModelId(config.model),
-            messages = messages,
-            reasoningEffort = Effort(id = config.reasoningEffort),
-            temperature = config.temperature,
-            maxCompletionTokens = config.maxCompletionTokens,
-            user = config.user
-        )
+        val request = if (config.reasoningEffort != "no_reasoning")
+            ChatCompletionRequest(
+                model = ModelId(config.model),
+                messages = messages,
+                reasoningEffort = Effort(id = config.reasoningEffort),
+                temperature = config.temperature,
+                maxCompletionTokens = config.maxCompletionTokens,
+                user = config.user
+            )
+        else
+            ChatCompletionRequest(
+                model = ModelId(config.model),
+                messages = messages,
+                temperature = config.temperature,
+                maxCompletionTokens = config.maxCompletionTokens,
+                user = config.user
+            )
 
         val completion = client.chatCompletion(request)
         val choice = completion.choices.firstOrNull()

@@ -53,6 +53,10 @@ tasks {
     runServer {
         minecraftVersion("1.21.8")
         jvmArgs("--add-modules", "jdk.incubator.vector")
+
+        downloadPlugins {
+            modrinth("placeholderapi", "2.11.6")
+        }
     }
 
     build {

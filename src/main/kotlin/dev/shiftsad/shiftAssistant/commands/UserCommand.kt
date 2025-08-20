@@ -1,13 +1,14 @@
 package dev.shiftsad.shiftAssistant.commands
 
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.TextArgument
+import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.executors.CommandExecutor
 import dev.shiftsad.shiftAssistant.holder.RateLimitHolder
 import dev.shiftsad.shiftAssistant.service.CompletionService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -22,7 +23,7 @@ class UserCommand(
     fun get(): CommandAPICommand {
         val rateLimitService = RateLimitHolder.get()
         return CommandAPICommand("ask")
-            .withArguments(TextArgument("query"))
+            .withArguments(GreedyStringArgument("query"))
             .executes(CommandExecutor { sender, args ->
                 var canRunCommand = false
                 if (sender is Player &&
@@ -49,8 +50,9 @@ class UserCommand(
 
     private fun handleQuery(query: String, sender: CommandSender) {
         coroutineScope.launch {
-            val response = completionService.complete(sender, query)
-            sender.sendMessage("Assistant: $response")
+            val response = "Assistente: " + completionService.complete(sender, query)
+            val component = MiniMessage.miniMessage().deserialize(response)
+            sender.sendMessage(component)
         }
     }
 }

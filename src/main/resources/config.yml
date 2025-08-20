@@ -1,43 +1,40 @@
 openai:
-  model: "gpt-5-mini"
+  model: "gpt-4.1-mini"
   embeddings_model: "text-embedding-3-small"
   api_key: "YOUR_OPENAI_API_KEY"
   base_url: "https://api.openai.com/v1/"
   timeout_ms: 12000
-  reasoning_effort: "low" # Válido: low, medium, high
+  reasoning_effort: "no_reasoning" # Válido: low, medium, high, no_reasoning
   # Decidir o "temperamento" do assistente, sendo um número menor mais conservador e um número maior mais criativo. (0 a 1)
-  # Alguns modelos, como o gpt-5-mini, não suportam temperatura, então use 1.
-  temperature: 1
-  # Quantidade máxima de ‘tokens’ que a resposta pode ter
-  max_completion_tokens: 512
+  temperature: 0.2
+  # Quantidade máxima de ‘tokens’ que a resposta pode ter.
+  max_completion_tokens: 8192
   # Usado para ajudar a OpenAI a monitorar e identificar abuso
   user: "ShiftAssistant v1 - Your server name"
 
 history:
   max_messages: 10
-  max_tokens: 2048
+  max_tokens: 16384
   max_age_seconds: 7200 # 2 horas
-  cleanup_interval_seconds: 30 # Tempo em segundos entre as limpezas do histórico de mensagens
+  # Tempo em segundos entre as limpezas do histórico de mensagens
+  cleanup_interval_seconds: 30
 
 retrieval:
-  # Número máximo de resultados retornados após filtragem por similaridade.
-  # Use valores entre 3 e 10 geralmente.
   top_k: 6
-  # Similaridade mínima (0.00–1.00) para considerar um chunk relevante.
-  # Aumentar reduz recall e aumenta precisão; diminuir faz o oposto.
-  min_cosine: 0.50
-  # Tamanho máximo de cada chunk (em caracteres) usado na criação de embeddings.
-  # Muito pequeno quebra contexto; muito grande dilui similaridade.
-  # Faixa recomendada: 300–800 dependendo do domínio.
-  max_chunk_chars: 400
+  min_cosine: 0.70
+  max_chunk_chars: 500
 
 prompt:
   # Sendo knowledge o resultado da pesquisa RAG pelo banco de informações e live_prompt a resposta depois do parse do placeholder api
-  base_prompt: "Você deve apenas responder com informações de seu banco de conhecimento e dados em tempo real, caso contrário, fale que desconhece a resposta.
-    Você não deve usar o formato Markdown, apenas texto simples.
+  base_prompt: "Você deve sempre formatar o texto usando MiniMessage em vez de Markdown.
+    Nunca use Markdown, asteriscos ou backticks. 
+    Use apenas tags MiniMessage para cores, estilos e formatação.
+    Lembre, MiniMessage não é html, então não use tags html.
+    Exemplo: <red>Texto em vermelho</red>, <bold>negrito</bold>, <gradient:blue:green>gradiente</gradient>.
+    
     Base de conhecimentos: {{knowledge}}
     Dados em tempo real: {{extra_prompt}}"
-  # Suporte a placeholder api, isso só funciona quando o comando é chamado por um jogador, e o placeholder api está instalado.
+  # Supports placeholder api
   extra_prompt: "Nick: %player_name% Dinheiro: %player_money% Pontos: %player_points% Nível: %player_level%"
 
 rate_limits:
